@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flipkart - Online Shopping & Great Deals</title>
+  <link rel="icon" type="image/x-icon" href="https://static-assets-web.flixcart.com/batman-returns/batman-returns/p/images/logo_lite-cbb357.png">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            fk: {
+              blue: '#2874f0',
+              darkBlue: '#172337',
+              yellow: '#ffe500',
+              orange: '#fb641b',
+              green: '#388e3c',
+              bgLight: '#f1f3f6'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- FontAwesome Icons CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Canvas Confetti CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+
+  <!-- Custom Stylesheets -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body class="text-gray-800 dark:text-gray-100 dark:bg-gray-900 min-h-screen flex flex-col antialiased selection:bg-yellow-400 selection:text-black">
+
+  <!-- ================= TOP NOTICE / MARQUEE TICKER ================= -->
+  <div class="bg-gradient-to-r from-blue-700 via-indigo-700 to-blue-800 text-white text-xs font-semibold py-1.5 overflow-hidden border-b border-blue-500/30">
+    <div class="marquee-content flex items-center gap-12 whitespace-nowrap">
+      <span class="flex items-center gap-2"><i class="fa-solid fa-bolt text-yellow-300"></i> FLIPKART BIG BILLION DAYS ARE LIVE! UP TO 80% OFF</span>
+      <span class="flex items-center gap-2"><i class="fa-solid fa-credit-card text-yellow-300"></i> 10% Instant Discount on HDFC & ICICI Bank Cards</span>
+      <span class="flex items-center gap-2"><i class="fa-solid fa-truck-fast text-yellow-300"></i> Free Next-Day Delivery with Flipkart Plus</span>
+      <span class="flex items-center gap-2"><i class="fa-solid fa-coins text-yellow-300"></i> Earn 4x SuperCoins on Every Purchase</span>
+      <!-- Repeated for seamless loop -->
+      <span class="flex items-center gap-2"><i class="fa-solid fa-bolt text-yellow-300"></i> FLIPKART BIG BILLION DAYS ARE LIVE! UP TO 80% OFF</span>
+      <span class="flex items-center gap-2"><i class="fa-solid fa-credit-card text-yellow-300"></i> 10% Instant Discount on HDFC & ICICI Bank Cards</span>
+      <span class="flex items-center gap-2"><i class="fa-solid fa-truck-fast text-yellow-300"></i> Free Next-Day Delivery with Flipkart Plus</span>
+      <span class="flex items-center gap-2"><i class="fa-solid fa-coins text-yellow-300"></i> Earn 4x SuperCoins on Every Purchase</span>
+    </div>
+  </div>
+
+  <!-- ================= MAIN HEADER NAVBAR ================= -->
+  <header class="sticky top-0 z-40 bg-fk-blue dark:bg-gray-900 border-b border-blue-600 dark:border-gray-800 shadow-md transition-colors">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-6">
+        <a href="#" onclick="resetFilters(); return false;" class="flex flex-col group">
+          <div class="flex items-center gap-1">
+            <span class="text-white font-extrabold italic text-2xl tracking-tight">Flipkart</span>
+            <i class="fa-solid fa-bag-shopping text-yellow-300 text-lg transform group-hover:rotate-12 transition"></i>
+          </div>
+          <div class="flex items-center gap-1 text-[11px] text-white/90 italic -mt-1 font-medium">
+            <span>Explore</span>
+            <span class="text-yellow-300 font-bold flex items-center gap-0.5">Plus <i class="fa-solid fa-plus text-[9px]"></i></span>
+          </div>
+        </a>
+      </div>
+
+      <!-- Animated Search Bar -->
+      <div class="flex-1 max-w-2xl relative hidden sm:block">
+        <div class="relative flex items-center">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 text-gray-400 text-sm"></i>
+          <input id="nav-search-input" type="text"
+                 placeholder="Search for Products, Brands and More..."
+                 class="w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 pl-10 pr-24 py-2.5 rounded-lg text-sm shadow-inner focus:outline-none focus:ring-2 focus:ring-yellow-400 transition" />
+          <div class="absolute right-2 flex items-center gap-1.5">
+            <button onclick="showToast('Voice Search is active! Speak now...', 'info', 'fa-microphone')" 
+                    class="p-1.5 text-blue-600 dark:text-blue-400 hover:text-blue-800 transition" 
+                    title="Search with Voice">
+              <i class="fa-solid fa-microphone text-sm"></i>
+            </button>
+            <span class="text-xs bg-gray-100 dark:bg-gray-700 text-gray-500 dark:text-gray-300 px-1.5 py-0.5 rounded font-mono">/</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Action Items (SuperCoins, Sounds, Dark Mode, Wishlist, Cart, Profile) -->
+      <div class="flex items-center gap-2 sm:gap-4">
+        
+        <!-- SuperCoins Balance Badge -->
+        <div class="hidden md:flex items-center gap-1.5 bg-blue-700/80 dark:bg-gray-800 px-3 py-1.5 rounded-full text-xs font-bold text-yellow-300 border border-blue-500/50 dark:border-gray-700 shadow-sm cursor-pointer hover:bg-blue-700 transition"
+             title="Flipkart SuperCoins Balance" onclick="showToast(`You have ${state.superCoins} SuperCoins to redeem at checkout!`, 'info', 'fa-coins')">
+          <i class="fa-solid fa-coins coin-spin"></i>
+          <span id="supercoins-count">250</span>
+          <span class="text-[10px] text-white/80 font-normal">Coins</span>
+        </div>
+
+        <!-- Sound FX Toggle -->
+        <button id="sound-toggle-btn" class="w-9 h-9 rounded-full bg-blue-700/60 dark:bg-gray-800 hover:bg-blue-700 text-white flex items-center justify-center transition active:scale-95" title="Toggle Sound Effects">
+          <i class="fa-solid fa-volume-high text-yellow-300 text-sm"></i>
+        </button>
+
+        <!-- Dark/Light Theme Toggle -->
+        <button id="theme-toggle-btn" class="w-9 h-9 rounded-full bg-blue-700/60 dark:bg-gray-800 hover:bg-blue-700 text-yellow-300 flex items-center justify-center transition active:scale-95" title="Toggle Theme">
+          <i class="fa-solid fa-moon text-sm dark:hidden"></i>
+          <i class="fa-solid fa-sun text-sm hidden dark:block text-yellow-400"></i>
+        </button>
+
+        <!-- Wishlist Button -->
+        <button onclick="showToast(`You have ${state.wishlist.length} item(s) in your Wishlist.`, 'info', 'fa-heart')" 
+                class="relative text-white hover:text-yellow-300 font-semibold text-sm flex items-center gap-1 px-2.5 py-1.5 rounded-lg hover:bg-blue-700/50 dark:hover:bg-gray-800 transition">
+          <i class="fa-solid fa-heart text-base text-red-400"></i>
+          <span class="hidden lg:inline text-xs">Wishlist</span>
+          <span id="wishlist-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-extrabold w-4 h-4 rounded-full flex items-center justify-center ring-2 ring-blue-600">0</span>
+        </button>
+
+        <!-- Cart Button (Fly-to-cart destination) -->
+        <button id="cart-btn" onclick="openCartDrawer()" 
+                class="relative bg-yellow-400 hover:bg-yellow-300 active:scale-95 text-gray-900 font-bold text-xs sm:text-sm px-3.5 py-2 rounded-lg flex items-center gap-2 shadow-sm transition-transform">
+          <i class="fa-solid fa-cart-shopping text-sm"></i>
+          <span>Cart</span>
+          <span id="cart-badge" class="bg-red-600 text-white text-[10px] font-black px-1.5 py-0.2 rounded-full ring-2 ring-yellow-400">0</span>
+        </button>
+
+        <!-- User Profile / Login Navigation Container -->
+        <div id="user-nav-container" class="pl-1 sm:pl-2"></div>
+
+      </div>
+    </div>
+
+    <!-- Mobile Search Bar (Below Header on small screens) -->
+    <div class="sm:hidden px-4 pb-3">
+      <div class="relative flex items-center">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 text-gray-400 text-sm"></i>
+        <input oninput="state.searchQuery = this.value; renderProducts();" type="text"
+               placeholder="Search Flipkart products..."
+               class="w-full bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 pl-10 pr-4 py-2 rounded-lg text-sm shadow-inner focus:outline-none" />
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= SUB-HEADER CATEGORY BAR ================= -->
+  <nav class="bg-white dark:bg-gray-800/90 border-b border-gray-200 dark:border-gray-700 shadow-xs transition-colors overflow-x-auto">
+    <div class="max-w-7xl mx-auto px-4 flex items-center justify-between gap-4 py-3 min-w-max">
+      
+      <button onclick="selectCategory('All')" data-category="All" class="category-item-btn flex flex-col items-center gap-1 group px-3 py-1 rounded-lg border-b-2 border-blue-600 text-blue-600 font-bold transition">
+        <div class="w-10 h-10 rounded-full bg-blue-50 dark:bg-gray-700 flex items-center justify-center group-hover:scale-110 transition">
+          <i class="fa-solid fa-border-all text-blue-600 dark:text-blue-400"></i>
+        </div>
+        <span class="text-xs">All Categories</span>
+      </button>
+
+      <button onclick="selectCategory('Mobiles')" data-category="Mobiles" class="category-item-btn flex flex-col items-center gap-1 group px-3 py-1 rounded-lg border-b-2 border-transparent hover:border-blue-500 transition text-gray-700 dark:text-gray-300">
+        <div class="w-10 h-10 rounded-full bg-amber-50 dark:bg-gray-700 flex items-center justify-center group-hover:scale-110 transition">
+          <i class="fa-solid fa-mobile-screen-button text-amber-500"></i>
+        </div>
+        <span class="text-xs">Mobiles</span>
+      </button>
+
+      <button onclick="selectCategory('Electronics')" data-category="Electronics" class="category-item-btn flex flex-col items-center gap-1 group px-3 py-1 rounded-lg border-b-2 border-transparent hover:border-blue-500 transition text-gray-700 dark:text-gray-300">
+        <div class="w-10 h-10 rounded-full bg-purple-50 dark:bg-gray-700 flex items-center justify-center group-hover:scale-110 transition">
+          <i class="fa-solid fa-laptop text-purple-600 dark:text-purple-400"></i>
+        </div>
+        <span class="text-xs">Electronics</span>
+      </button>
+
+      <button onclick="selectCategory('Fashion')" data-category="Fashion" class="category-item-btn flex flex-col items-center gap-1 group px-3 py-1 rounded-lg border-b-2 border-transparent hover:border-blue-500 transition text-gray-700 dark:text-gray-300">
+        <div class="w-10 h-10 rounded-full bg-pink-50 dark:bg-gray-700 flex items-center justify-center group-hover:scale-110 transition">
+          <i class="fa-solid fa-shirt text-pink-500"></i>
+        </div>
+        <span class="text-xs">Fashion</span>
+      </button>
+
+      <button onclick="selectCategory('Appliances')" data-category="Appliances" class="category-item-btn flex flex-col items-center gap-1 group px-3 py-1 rounded-lg border-b-2 border-transparent hover:border-blue-500 transition text-gray-700 dark:text-gray-300">
+        <div class="w-10 h-10 rounded-full bg-cyan-50 dark:bg-gray-700 flex items-center justify-center group-hover:scale-110 transition">
+          <i class="fa-solid fa-tv text-cyan-500"></i>
+        </div>
+        <span class="text-xs">Appliances</span>
+      </button>
+
+      <button onclick="selectCategory('Home & Kitchen')" data-category="Home & Kitchen" class="category-item-btn flex flex-col items-center gap-1 group px-3 py-1 rounded-lg border-b-2 border-transparent hover:border-blue-500 transition text-gray-700 dark:text-gray-300">
+        <div class="w-10 h-10 rounded-full bg-emerald-50 dark:bg-gray-700 flex items-center justify-center group-hover:scale-110 transition">
+          <i class="fa-solid fa-couch text-emerald-500"></i>
+        </div>
+        <span class="text-xs">Home & Furniture</span>
+      </button>
+
+      <button onclick="selectCategory('Beauty')" data-category="Beauty" class="category-item-btn flex flex-col items-center gap-1 group px-3 py-1 rounded-lg border-b-2 border-transparent hover:border-blue-500 transition text-gray-700 dark:text-gray-300">
+        <div class="w-10 h-10 rounded-full bg-rose-50 dark:bg-gray-700 flex items-center justify-center group-hover:scale-110 transition">
+          <i class="fa-solid fa-wand-magic-sparkles text-rose-500"></i>
+        </div>
+        <span class="text-xs">Beauty & Care</span>
+      </button>
+
+      <button onclick="showToast('SuperCoins Rewards Zone: Redeem 100+ Free Vouchers & Perks!', 'info', 'fa-crown')" class="flex flex-col items-center gap-1 group px-3 py-1 rounded-lg border-b-2 border-transparent hover:border-yellow-400 transition text-gray-700 dark:text-gray-300">
+        <div class="w-10 h-10 rounded-full bg-yellow-50 dark:bg-gray-700 flex items-center justify-center group-hover:scale-110 transition">
+          <i class="fa-solid fa-crown text-yellow-500"></i>
+        </div>
+        <span class="text-xs font-bold text-yellow-600 dark:text-yellow-400">SuperCoin Zone</span>
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- ================= HERO CAROUSEL & DEALS WIDGET ================= -->
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-6">
+    
+    <!-- Hero Slider Container -->
+    <div class="relative group">
+      <div id="hero-slide-content"></div>
+      
+      <!-- Controls -->
+      <button onclick="prevSlide()" class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-lg">
+        <i class="fa-solid fa-chevron-left"></i>
+      </button>
+      <button onclick="nextSlide()" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/20 backdrop-blur-md hover:bg-white/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition shadow-lg">
+        <i class="fa-solid fa-chevron-right"></i>
+      </button>
+
+      <!-- Dots -->
+      <div id="hero-slider-dots" class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2 z-20"></div>
+    </div>
+
+    <!-- Deals of the Day Strip & Live Countdown Bar -->
+    <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-600 flex items-center justify-center text-xl font-bold">
+          <i class="fa-solid fa-fire-flame-curved animate-bounce"></i>
+        </div>
+        <div>
+          <h2 class="font-bold text-base text-gray-900 dark:text-white flex items-center gap-2">
+            Deals of the Day
+            <span class="text-xs font-semibold px-2 py-0.5 rounded bg-red-100 text-red-600 dark:bg-red-900/40 dark:text-red-400">Live</span>
+          </h2>
+          <p class="text-xs text-gray-500 dark:text-gray-400">Fresh discounts replenished every 6 hours</p>
+        </div>
+      </div>
+
+      <!-- Live Clock Counter -->
+      <div class="flex items-center gap-2 bg-gray-50 dark:bg-gray-700/60 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-600">
+        <span class="text-xs font-bold text-gray-500 dark:text-gray-300 flex items-center gap-1.5">
+          <i class="fa-regular fa-clock text-orange-500"></i> Ends In:
+        </span>
+        <div class="flex items-center gap-1 text-sm">
+          <span id="timer-hours" class="countdown-box">05</span>
+          <span class="font-bold">:</span>
+          <span id="timer-mins" class="countdown-box">42</span>
+          <span class="font-bold">:</span>
+          <span id="timer-secs" class="countdown-box text-orange-400">18</span>
+        </div>
+      </div>
+
+      <!-- Quick Deal CTA -->
+      <div class="flex items-center gap-2">
+        <button onclick="selectCategory('All');" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-lg shadow-sm transition">
+          View All Deals <i class="fa-solid fa-arrow-right ml-1"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= MAIN CATALOG WITH FILTERS & PRODUCTS GRID ================= -->
+    <div id="products-section" class="grid grid-cols-1 lg:grid-cols-4 gap-6 pt-2">
+      
+      <!-- LEFT SIDEBAR FILTERS -->
+      <aside class="space-y-4">
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-5 shadow-sm border border-gray-100 dark:border-gray-700 sticky top-24">
+          <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-700">
+            <h3 class="font-bold text-sm uppercase tracking-wider text-gray-900 dark:text-white flex items-center gap-2">
+              <i class="fa-solid fa-sliders text-blue-600"></i> Filters
+            </h3>
+            <button onclick="resetFilters()" class="text-xs text-blue-600 dark:text-blue-400 hover:underline font-bold">
+              CLEAR ALL
+            </button>
+          </div>
+
+          <!-- Flipkart Assured Filter Switch -->
+          <div class="py-4 border-b border-gray-200 dark:border-gray-700">
+            <label class="flex items-center justify-between cursor-pointer">
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-bold text-gray-800 dark:text-gray-200">Flipkart Assured</span>
+                <span class="text-[10px] font-black italic px-1.5 py-0.2 rounded bg-blue-50 text-blue-600 border border-blue-200">Plus</span>
+              </div>
+              <input id="filter-assured" type="checkbox" class="w-4 h-4 text-blue-600 rounded focus:ring-blue-500 cursor-pointer" />
+            </label>
+          </div>
+
+          <!-- Price Range Slider -->
+          <div class="py-4 border-b border-gray-200 dark:border-gray-700">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-gray-700 dark:text-gray-300">Max Price</span>
+              <span id="filter-price-val" class="text-xs font-extrabold text-blue-600 dark:text-blue-400">₹1,50,000</span>
+            </div>
+            <input id="filter-price-slider" type="range" min="1000" max="150000" step="2000" value="150000" 
+                   class="w-full accent-blue-600 cursor-pointer h-1.5 bg-gray-200 dark:bg-gray-700 rounded-lg" />
+            <div class="flex justify-between text-[10px] text-gray-400 mt-1">
+              <span>₹1,000</span>
+              <span>₹1,50,000</span>
+            </div>
+          </div>
+
+          <!-- Rating Filter -->
+          <div class="py-4 border-b border-gray-200 dark:border-gray-700">
+            <span class="text-xs font-bold text-gray-700 dark:text-gray-300 block mb-2">Customer Ratings</span>
+            <div class="space-y-1.5 text-xs">
+              <label class="flex items-center gap-2 cursor-pointer text-gray-600 dark:text-gray-300 hover:text-blue-600">
+                <input type="radio" name="rating-filter" onchange="state.minRating = 4; renderProducts();" class="text-blue-600" />
+                <span class="flex items-center gap-1 font-semibold">4★ & above <i class="fa-solid fa-star text-[10px] text-green-600"></i></span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer text-gray-600 dark:text-gray-300 hover:text-blue-600">
+                <input type="radio" name="rating-filter" onchange="state.minRating = 4.5; renderProducts();" class="text-blue-600" />
+                <span class="flex items-center gap-1 font-semibold">4.5★ & above <i class="fa-solid fa-star text-[10px] text-green-600"></i></span>
+              </label>
+              <label class="flex items-center gap-2 cursor-pointer text-gray-600 dark:text-gray-300 hover:text-blue-600">
+                <input type="radio" name="rating-filter" checked onchange="state.minRating = 0; renderProducts();" class="text-blue-600" />
+                <span>All Ratings</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Trust & Guarantee Perks -->
+          <div class="pt-4 space-y-3">
+            <div class="flex items-center gap-2.5 text-xs text-gray-600 dark:text-gray-400">
+              <i class="fa-solid fa-rotate-left text-blue-600"></i>
+              <span>7 Days Easy Replacement</span>
+            </div>
+            <div class="flex items-center gap-2.5 text-xs text-gray-600 dark:text-gray-400">
+              <i class="fa-solid fa-shield-halved text-green-600"></i>
+              <span>100% Original Products</span>
+            </div>
+            <div class="flex items-center gap-2.5 text-xs text-gray-600 dark:text-gray-400">
+              <i class="fa-solid fa-truck-fast text-amber-500"></i>
+              <span>Free Delivery on ₹500+</span>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+
+      <!-- RIGHT PRODUCT LISTINGS -->
+      <section class="lg:col-span-3 space-y-4">
+        
+        <!-- Controls Bar (Active Category, Count, Sort) -->
+        <div class="bg-white dark:bg-gray-800 rounded-xl p-4 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <span id="results-count" class="text-xs font-semibold text-gray-500 dark:text-gray-400">Showing products</span>
+          </div>
+
+          <!-- Sort Select -->
+          <div class="flex items-center gap-2">
+            <label for="sort-select" class="text-xs font-semibold text-gray-500 dark:text-gray-400">Sort By:</label>
+            <select id="sort-select" class="text-xs font-bold bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer">
+              <option value="featured">Featured Deals</option>
+              <option value="price-low">Price -- Low to High</option>
+              <option value="price-high">Price -- High to Low</option>
+              <option value="rating">Highest Rated</option>
+              <option value="discount">Biggest Discount</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+          <!-- Populated dynamically via app.js -->
+        </div>
+
+      </section>
+    </div>
+
+  </main>
+
+  <!-- ================= PRODUCT QUICK VIEW MODAL ================= -->
+  <div id="quickview-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-3xl w-full overflow-hidden shadow-2xl relative border border-gray-100 dark:border-gray-700 max-h-[90vh] overflow-y-auto">
+      <button onclick="closeProductModal()" class="absolute top-4 right-4 z-20 w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-200 transition">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+      <div id="quickview-content"></div>
+    </div>
+  </div>
+
+  <!-- ================= CART SLIDE-IN DRAWER ================= -->
+  <div id="drawer-overlay" onclick="closeCartDrawer()" class="fixed inset-0 bg-black/50 z-50 backdrop-blur-xs hidden transition-opacity"></div>
+  
+  <div id="cart-drawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white dark:bg-gray-900 shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+    <!-- Header -->
+    <div class="p-4 bg-fk-blue text-white flex items-center justify-between shadow-sm">
+      <div class="flex items-center gap-2">
+        <i class="fa-solid fa-cart-shopping text-yellow-300"></i>
+        <h3 class="font-bold text-base">My Flipkart Cart</h3>
+      </div>
+      <button onclick="closeCartDrawer()" class="w-8 h-8 rounded-full hover:bg-white/20 flex items-center justify-center transition">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Items List (Scrollable) -->
+    <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-3">
+      <!-- Injected by app.js -->
+    </div>
+
+    <!-- Summary & Checkout Footer -->
+    <div id="cart-summary-container" class="p-4 bg-gray-50 dark:bg-gray-800/80 border-t border-gray-200 dark:border-gray-700">
+      <!-- Injected by app.js -->
+    </div>
+  </div>
+
+  <!-- ================= CHECKOUT SIMULATION MODAL ================= -->
+  <div id="checkout-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl relative border border-gray-100 dark:border-gray-700 p-6 space-y-5">
+      <div class="flex items-center justify-between pb-3 border-b border-gray-200 dark:border-gray-700">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-shield-check text-green-600 text-xl"></i>
+          <h3 class="font-bold text-lg text-gray-900 dark:text-white">Flipkart Express Checkout</h3>
+        </div>
+        <button onclick="closeCheckoutModal()" class="text-gray-400 hover:text-gray-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <!-- Delivery Address -->
+      <div>
+        <label class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider block mb-1">1. Delivery Address</label>
+        <div class="p-3 rounded-xl bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 flex items-start justify-between">
+          <div>
+            <p id="checkout-customer-name" class="text-xs font-bold text-gray-900 dark:text-white">Rahul Sharma <span class="bg-blue-100 dark:bg-blue-900/60 text-blue-700 dark:text-blue-300 text-[10px] px-1.5 py-0.5 rounded ml-1 font-bold">HOME</span></p>
+            <p class="text-xs text-gray-500 dark:text-gray-300 mt-0.5">Plot 42, Silicon Heights, Koramangala, Bengaluru - 560034</p>
+            <p class="text-[11px] text-gray-400 mt-1"><i class="fa-solid fa-phone text-[9px]"></i> +91 98765 43210</p>
+          </div>
+          <button class="text-xs font-bold text-blue-600 hover:underline">Change</button>
+        </div>
+      </div>
+
+      <!-- Payment Mode -->
+      <div>
+        <label class="text-xs font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wider block mb-2">2. Payment Method</label>
+        <div class="space-y-2">
+          <label class="flex items-center justify-between p-3 rounded-xl border border-blue-500 bg-blue-50/50 dark:bg-blue-950/20 cursor-pointer">
+            <div class="flex items-center gap-2.5">
+              <input type="radio" name="payment-method" checked class="text-blue-600" />
+              <div class="text-xs">
+                <span class="font-bold text-gray-900 dark:text-white">UPI (Google Pay / PhonePe / Paytm)</span>
+                <p class="text-[11px] text-emerald-600">Instant ₹100 Cashback on UPI</p>
+              </div>
+            </div>
+            <i class="fa-brands fa-google-pay text-xl text-blue-600"></i>
+          </label>
+          <label class="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-gray-300 cursor-pointer">
+            <div class="flex items-center gap-2.5">
+              <input type="radio" name="payment-method" class="text-blue-600" />
+              <span class="text-xs font-bold text-gray-800 dark:text-gray-200">Flipkart Pay Later (Buy Now, Pay Next Month)</span>
+            </div>
+            <span class="text-[10px] font-bold px-1.5 py-0.5 bg-yellow-400 text-black rounded">Approved</span>
+          </label>
+          <label class="flex items-center justify-between p-3 rounded-xl border border-gray-200 dark:border-gray-600 hover:border-gray-300 cursor-pointer">
+            <div class="flex items-center gap-2.5">
+              <input type="radio" name="payment-method" class="text-blue-600" />
+              <span class="text-xs font-bold text-gray-800 dark:text-gray-200">Credit / Debit Card (No Cost EMI)</span>
+            </div>
+            <i class="fa-regular fa-credit-card text-gray-400"></i>
+          </label>
+        </div>
+      </div>
+
+      <!-- Total & Action -->
+      <div class="pt-2 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
+        <div>
+          <span class="text-xs text-gray-500">Total Payable:</span>
+          <p id="checkout-total-amount" class="text-xl font-black text-gray-900 dark:text-white">₹0</p>
+        </div>
+        <button id="confirm-order-btn" onclick="confirmOrderPlacement()" 
+                class="px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm rounded-xl shadow-lg transition active:scale-95 flex items-center gap-2">
+          <span>Place Order</span> <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= ORDER SUCCESS CELEBRATION MODAL ================= -->
+  <div id="order-success-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl max-w-md w-full overflow-hidden shadow-2xl p-6 text-center space-y-4 border border-gray-100 dark:border-gray-700 relative">
+      <div class="w-20 h-20 mx-auto bg-emerald-100 dark:bg-emerald-950/60 text-emerald-500 rounded-full flex items-center justify-center text-4xl shadow-inner animate-bounce">
+        <i class="fa-solid fa-check"></i>
+      </div>
+      <div>
+        <h3 class="text-2xl font-black text-gray-900 dark:text-white">Order Placed Successfully!</h3>
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Thank you for shopping on Flipkart. A confirmation SMS & email has been dispatched.</p>
+      </div>
+
+      <!-- SuperCoins Reward Card -->
+      <div class="p-3 rounded-2xl bg-gradient-to-r from-yellow-400/20 via-amber-400/20 to-yellow-500/20 border border-yellow-300 dark:border-yellow-700 flex items-center justify-center gap-3">
+        <i class="fa-solid fa-coins text-2xl text-yellow-500 coin-spin"></i>
+        <span id="earned-coins-text" class="text-sm font-extrabold text-amber-900 dark:text-yellow-300">+45 SuperCoins Earned!</span>
+      </div>
+
+      <!-- Tracking Timeline -->
+      <div class="py-2 text-left">
+        <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Order Tracking: <span id="success-order-id" class="text-blue-600 font-mono"></span></p>
+        <div class="space-y-3 relative pl-6 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-0.5 before:bg-emerald-500">
+          <div class="relative">
+            <span class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-4 ring-emerald-100 dark:ring-emerald-900"></span>
+            <p class="text-xs font-bold text-gray-900 dark:text-white">Order Confirmed</p>
+            <p class="text-[10px] text-gray-400">Just now</p>
+          </div>
+          <div class="relative">
+            <span class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-gray-300 dark:bg-gray-600"></span>
+            <p class="text-xs font-medium text-gray-500">Packed by Flipkart Assured Seller</p>
+            <p class="text-[10px] text-gray-400">Expected by 8:00 AM Tomorrow</p>
+          </div>
+          <div class="relative">
+            <span class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-gray-300 dark:bg-gray-600"></span>
+            <p class="text-xs font-medium text-gray-500">Out for Delivery</p>
+            <p class="text-[10px] text-gray-400">Tomorrow by 7:00 PM</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button onclick="closeOrderSuccessModal()" class="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold text-sm rounded-xl shadow transition">
+          Continue Shopping
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOAST CONTAINER ================= -->
+  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col items-end pointer-events-auto"></div>
+
+  <!-- ================= FOOTER ================= -->
+  <footer class="bg-fk-darkBlue text-gray-400 text-xs mt-16 pt-10 pb-6 border-t border-gray-800">
+    <div class="max-w-7xl mx-auto px-4 grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+      <div>
+        <h4 class="text-gray-200 font-bold uppercase tracking-wider mb-3">About</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:text-white transition">Contact Us</a></li>
+          <li><a href="#" class="hover:text-white transition">About Us</a></li>
+          <li><a href="#" class="hover:text-white transition">Careers</a></li>
+          <li><a href="#" class="hover:text-white transition">Flipkart Stories</a></li>
+          <li><a href="#" class="hover:text-white transition">Press</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-gray-200 font-bold uppercase tracking-wider mb-3">Help</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:text-white transition">Payments</a></li>
+          <li><a href="#" class="hover:text-white transition">Shipping</a></li>
+          <li><a href="#" class="hover:text-white transition">Cancellation & Returns</a></li>
+          <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+          <li><a href="#" class="hover:text-white transition">Report Infringement</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-gray-200 font-bold uppercase tracking-wider mb-3">Consumer Policy</h4>
+        <ul class="space-y-2">
+          <li><a href="#" class="hover:text-white transition">Return Policy</a></li>
+          <li><a href="#" class="hover:text-white transition">Terms Of Use</a></li>
+          <li><a href="#" class="hover:text-white transition">Security</a></li>
+          <li><a href="#" class="hover:text-white transition">Privacy</a></li>
+          <li><a href="#" class="hover:text-white transition">Sitemap</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="text-gray-200 font-bold uppercase tracking-wider mb-3">Mail Us</h4>
+        <p class="leading-relaxed">
+          Flipkart Internet Private Limited,<br />
+          Buildings Alyssa, Begonia & Clove Embassy Tech Village,<br />
+          Outer Ring Road, Devarabeesanahalli Village,<br />
+          Bengaluru, 560103, Karnataka, India
+        </p>
+      </div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 pt-6 border-t border-gray-800 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px]">
+      <div class="flex items-center gap-6">
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-briefcase text-yellow-400"></i> Become a Seller</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-star text-yellow-400"></i> Advertise</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-gift text-yellow-400"></i> Gift Cards</span>
+        <span class="flex items-center gap-1.5"><i class="fa-solid fa-circle-question text-yellow-400"></i> Help Center</span>
+      </div>
+      <p>&copy; 2026 Flipkart Clone. Crafted with modern web technologies & cool animations.</p>
+    </div>
+  </footer>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
